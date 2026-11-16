@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Entornos virtuales
+.venv/
+venv/
+
+# Variables de entorno
+.env
+
+# Caché de modelos
+.cache/
+models/
+huggingface/
+*.safetensors
+
+# Sistema
+.DS_Store
+Thumbs.db
