@@ -1,0 +1,61 @@
+id,texto_a,texto_b,misma_falla,escenario
+P01,"no hay luz en toda la cuadra","toda la cuadra esta sin energia",1,corte_cuadra
+P02,"Corte total de luz en toda la cuadra","No hay luz en toda la cuadra desde hace 20 minutos",1,corte_cuadra
+P03,"SE FUE LA LUZ EN TODO EL BARRIO","se fue la electricidad en la zona",1,corte_cuadra
+P04,"no hay corriente en la manzana","toda la manzana quedo sin luz",1,corte_cuadra
+P05,"corte de energia en la zona","sin luz en el barrio entero",1,corte_cuadra
+P06,"la luz se fue desde las seis","sin servicio electrico en la calle",1,corte_cuadra
+P07,"se escucho una explosion en el transformador","sono un estruendo en el transformador",1,transformador
+P08,"el transformador hizo un ruido fuerte","ruido fuerte del transformador y se corto la luz",1,transformador
+P09,"explotó el transformador de la esquina","el transformador de la esquina revento",1,transformador
+P10,"se oyo un ruido fuerte y se apago todo","hubo una explosion y nos quedamos sin luz",1,transformador
+P11,"el transformador hace un zumbido raro","zumba el transformador y huele a quemado",1,transformador
+P12,"hay un cable caido en la pista","un cable esta en el suelo con chispas",1,cable_chispas
+P13,"se ven chispas en los cables","los cables echan chispas en la esquina",1,cable_chispas
+P14,"cayo un cable de luz en la vereda","cable del tendido caido en la vereda",1,cable_chispas
+P15,"el cable de la calle hace chispas","chispas en el cable de la calle",1,cable_chispas
+P16,"la luz parpadea en toda la zona","parpadeo de luz en todo el barrio",1,baja_tension_zona
+P17,"la tension baja y los focos se ven tenues","los focos se ven debiles por baja tension",1,baja_tension_zona
+P18,"la luz va y viene cada rato","intermitencia de luz en varias casas",1,baja_tension_zona
+P19,"baja tension en la cuadra","el voltaje baja en toda la calle",1,baja_tension_zona
+P20,"no hay luz solo en mi casa","No hay energia electrica en mi vivienda",1,falla_interna
+P21,"se bajo la llave termica de mi casa","la llave termica se disparo en mi vivienda",1,falla_interna
+P22,"mi medidor hace un ruido raro","el medidor de mi casa suena raro",1,falla_interna
+P23,"no funciona el tomacorriente de mi cuarto","los enchufes de mi cuarto no dan luz",1,falla_interna
+P24,"un poste esta inclinado en la esquina","el poste de luz se ve chueco",1,poste_danado
+P25,"se cayo un poste y hay cables en la pista","poste caido con cables en la pista",1,poste_danado
+P26,"el poste esta dañado y suelta chispas","poste dañado con chispas en la calle",1,poste_danado
+P27,"un carro choco el poste de luz","el poste quedo golpeado por un choque",1,poste_danado
+P28,"hay un olor a quemado en el medidor","el medidor huele a quemado",1,fuga_cortocircuito
+P29,"se produjo un cortocircuito en la casa","hubo un corto en la instalacion",1,fuga_cortocircuito
+P30,"hay una fuga de corriente en la pared","la pared tiene corriente y chispea",1,fuga_cortocircuito
+N01,"no hay luz en mi casa","corte total de luz en toda la cuadra",0,corte_cuadra_vs_interna
+N02,"no hay luz solo en mi casa","se fue la luz en todo el barrio",0,corte_cuadra_vs_interna
+N03,"se bajo la llave termica","corte de energia en la zona",0,corte_cuadra_vs_interna
+N04,"mi medidor hace ruido","ruido fuerte en el transformador",0,transformador_vs_medidor
+N05,"el transformador hace ruido","mi medidor suena raro",0,transformador_vs_medidor
+N06,"cable caido en la pista","se fue la luz en la cuadra",0,cable_vs_corte
+N07,"se ven chispas en el cable","el poste esta inclinado",0,cable_vs_poste
+N08,"la luz parpadea en mi casa","intermitencia en toda la zona",0,zona_vs_interna
+N09,"baja tension en mi casa","baja tension en toda la cuadra",0,zona_vs_interna
+N10,"el foco de mi cuarto no prende","el alumbrado publico no enciende",0,interna_vs_alumbrado
+N11,"el poste esta chueco","el cable esta en el suelo",0,poste_vs_cable
+N12,"poste caido en la esquina","cayo un cable en la vereda",0,poste_vs_cable
+N13,"corto en la instalacion de mi casa","cortocircuito en el transformador",0,interna_vs_red
+N14,"olor a quemado en mi casa","el transformador huele a quemado",0,interna_vs_transformador
+N15,"el medidor esta dañado","el poste esta dañado",0,medidor_vs_poste
+N16,"no hay agua en la cuadra","no hay luz en la cuadra",0,energia_vs_otros_servicios
+N17,"el internet se fue en la zona","se fue la luz en la zona",0,energia_vs_otros_servicios
+N18,"el recibo de luz vino muy alto","no hay luz en mi casa",0,cobro_vs_corte
+N19,"la caja del medidor esta rota","el cable del poste esta roto",0,medidor_vs_cable
+N20,"se quemo el foco del pasillo","se quemo el transformador",0,interna_vs_transformador
+N21,"el interruptor de mi cuarto falla","se bajo la llave general",0,interna_vs_red
+N22,"el poste tiene un aviso pegado","el poste esta inclinado",0,poste_sin_falla_vs_daño
+N23,"robaron los cables de la calle","los cables hacen chispas",0,robo_vs_chispas
+N24,"la luz de la calle esta prendida de dia","el alumbrado publico no prende",0,alumbrado_opuesto
+N25,"mi refrigeradora no enciende","no hay luz en mi casa",0,electrodomestico_vs_corte
+N26,"el vecino tiene luz y yo no","toda la cuadra esta sin luz",0,interna_vs_cuadra
+N27,"hace ruido la bomba de agua","hace ruido el transformador",0,ruido_otro_vs_transformador
+N28,"el transformador esta pintado de nuevo","el transformador esta dañado",0,mantenimiento_vs_falla
+N29,"se cayo la señal de cable","se cayo un cable de luz",0,cable_tv_vs_electrico
+N30,"hay una fuga de agua en la pista","hay una fuga de corriente",0,fuga_agua_vs_corriente

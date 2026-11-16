@@ -1,0 +1,61 @@
+id,particion,escenario,texto_a,texto_b,misma_falla,sim_embeddings,sim_tfidf
+P01,evaluacion,corte_cuadra,no hay luz en toda la cuadra,toda la cuadra esta sin energia,1,0.5861,0.3438
+P02,calibracion,corte_cuadra,Corte total de luz en toda la cuadra,No hay luz en toda la cuadra desde hace 20 minutos,1,0.6009,0.3265
+P03,calibracion,corte_cuadra,SE FUE LA LUZ EN TODO EL BARRIO,se fue la electricidad en la zona,1,0.1480,0.3330
+P04,calibracion,corte_cuadra,no hay corriente en la manzana,toda la manzana quedo sin luz,1,0.7902,0.2866
+P05,calibracion,corte_cuadra,corte de energia en la zona,sin luz en el barrio entero,1,0.4555,0.0191
+P06,calibracion,corte_cuadra,la luz se fue desde las seis,sin servicio electrico en la calle,1,0.2596,0.0141
+P07,evaluacion,transformador,se escucho una explosion en el transformador,sono un estruendo en el transformador,1,0.5005,0.1893
+P08,calibracion,transformador,el transformador hizo un ruido fuerte,ruido fuerte del transformador y se corto la luz,1,0.7830,0.2695
+P09,calibracion,transformador,explotó el transformador de la esquina,el transformador de la esquina revento,1,0.7396,0.6552
+P10,calibracion,transformador,se oyo un ruido fuerte y se apago todo,hubo una explosion y nos quedamos sin luz,1,0.4727,0.0000
+P11,evaluacion,transformador,el transformador hace un zumbido raro,zumba el transformador y huele a quemado,1,0.6746,0.1300
+P12,evaluacion,cable_chispas,hay un cable caido en la pista,un cable esta en el suelo con chispas,1,0.8386,0.1907
+P13,evaluacion,cable_chispas,se ven chispas en los cables,los cables echan chispas en la esquina,1,0.8971,0.4267
+P14,calibracion,cable_chispas,cayo un cable de luz en la vereda,cable del tendido caido en la vereda,1,0.7610,0.3230
+P15,calibracion,cable_chispas,el cable de la calle hace chispas,chispas en el cable de la calle,1,0.9361,0.7022
+P16,calibracion,baja_tension_zona,la luz parpadea en toda la zona,parpadeo de luz en todo el barrio,1,0.8093,0.0469
+P17,evaluacion,baja_tension_zona,la tension baja y los focos se ven tenues,los focos se ven debiles por baja tension,1,0.9321,0.5241
+P18,calibracion,baja_tension_zona,la luz va y viene cada rato,intermitencia de luz en varias casas,1,0.6127,0.0250
+P19,evaluacion,baja_tension_zona,baja tension en la cuadra,el voltaje baja en toda la calle,1,0.3255,0.1477
+P20,evaluacion,falla_interna,no hay luz solo en mi casa,No hay energia electrica en mi vivienda,1,0.6554,0.2697
+P21,evaluacion,falla_interna,se bajo la llave termica de mi casa,la llave termica se disparo en mi vivienda,1,0.9470,0.3876
+P22,calibracion,falla_interna,mi medidor hace un ruido raro,el medidor de mi casa suena raro,1,0.7794,0.2012
+P23,calibracion,falla_interna,no funciona el tomacorriente de mi cuarto,los enchufes de mi cuarto no dan luz,1,0.7169,0.2821
+P24,evaluacion,poste_danado,un poste esta inclinado en la esquina,el poste de luz se ve chueco,1,0.4767,0.0496
+P25,evaluacion,poste_danado,se cayo un poste y hay cables en la pista,poste caido con cables en la pista,1,0.9378,0.4108
+P26,evaluacion,poste_danado,el poste esta dañado y suelta chispas,poste dañado con chispas en la calle,1,0.7886,0.2091
+P27,calibracion,poste_danado,un carro choco el poste de luz,el poste quedo golpeado por un choque,1,0.4735,0.1424
+P28,evaluacion,fuga_cortocircuito,hay un olor a quemado en el medidor,el medidor huele a quemado,1,0.9438,0.3344
+P29,evaluacion,fuga_cortocircuito,se produjo un cortocircuito en la casa,hubo un corto en la instalacion,1,0.6312,0.1023
+P30,evaluacion,fuga_cortocircuito,hay una fuga de corriente en la pared,la pared tiene corriente y chispea,1,0.9239,0.3134
+N01,evaluacion,corte_cuadra_vs_interna,no hay luz en mi casa,corte total de luz en toda la cuadra,0,0.4977,0.1273
+N02,calibracion,corte_cuadra_vs_interna,no hay luz solo en mi casa,se fue la luz en todo el barrio,0,0.6404,0.0483
+N03,calibracion,corte_cuadra_vs_interna,se bajo la llave termica,corte de energia en la zona,0,0.4927,0.0201
+N04,evaluacion,transformador_vs_medidor,mi medidor hace ruido,ruido fuerte en el transformador,0,0.7087,0.1142
+N05,calibracion,transformador_vs_medidor,el transformador hace ruido,mi medidor suena raro,0,0.4209,0.0000
+N06,evaluacion,cable_vs_corte,cable caido en la pista,se fue la luz en la cuadra,0,0.3678,0.1293
+N07,evaluacion,cable_vs_poste,se ven chispas en el cable,el poste esta inclinado,0,0.5446,0.0335
+N08,evaluacion,zona_vs_interna,la luz parpadea en mi casa,intermitencia en toda la zona,0,0.2135,0.0468
+N09,calibracion,zona_vs_interna,baja tension en mi casa,baja tension en toda la cuadra,0,0.6749,0.5876
+N10,calibracion,interna_vs_alumbrado,el foco de mi cuarto no prende,el alumbrado publico no enciende,0,0.2882,0.0629
+N11,calibracion,poste_vs_cable,el poste esta chueco,el cable esta en el suelo,0,0.5155,0.1330
+N12,calibracion,poste_vs_cable,poste caido en la esquina,cayo un cable en la vereda,0,0.4581,0.0942
+N13,evaluacion,interna_vs_red,corto en la instalacion de mi casa,cortocircuito en el transformador,0,0.3610,0.0242
+N14,calibracion,interna_vs_transformador,olor a quemado en mi casa,el transformador huele a quemado,0,0.7653,0.1443
+N15,evaluacion,medidor_vs_poste,el medidor esta dañado,el poste esta dañado,0,0.7133,0.5142
+N16,evaluacion,energia_vs_otros_servicios,no hay agua en la cuadra,no hay luz en la cuadra,0,0.5450,0.5750
+N17,calibracion,energia_vs_otros_servicios,el internet se fue en la zona,se fue la luz en la zona,0,0.3533,0.5102
+N18,calibracion,cobro_vs_corte,el recibo de luz vino muy alto,no hay luz en mi casa,0,0.4018,0.0323
+N19,evaluacion,medidor_vs_cable,la caja del medidor esta rota,el cable del poste esta roto,0,0.4077,0.1258
+N20,evaluacion,interna_vs_transformador,se quemo el foco del pasillo,se quemo el transformador,0,0.7800,0.5365
+N21,evaluacion,interna_vs_red,el interruptor de mi cuarto falla,se bajo la llave general,0,0.2339,0.0000
+N22,calibracion,poste_sin_falla_vs_daño,el poste tiene un aviso pegado,el poste esta inclinado,0,0.6090,0.1859
+N23,calibracion,robo_vs_chispas,robaron los cables de la calle,los cables hacen chispas,0,0.6977,0.2985
+N24,evaluacion,alumbrado_opuesto,la luz de la calle esta prendida de dia,el alumbrado publico no prende,0,0.3119,0.0000
+N25,calibracion,electrodomestico_vs_corte,mi refrigeradora no enciende,no hay luz en mi casa,0,0.3879,0.1333
+N26,evaluacion,interna_vs_cuadra,el vecino tiene luz y yo no,toda la cuadra esta sin luz,0,0.5409,0.0297
+N27,calibracion,ruido_otro_vs_transformador,hace ruido la bomba de agua,hace ruido el transformador,0,0.5900,0.3202
+N28,calibracion,mantenimiento_vs_falla,el transformador esta pintado de nuevo,el transformador esta dañado,0,0.8095,0.4119
+N29,evaluacion,cable_tv_vs_electrico,se cayo la señal de cable,se cayo un cable de luz,0,0.8563,0.3596
+N30,evaluacion,fuga_agua_vs_corriente,hay una fuga de agua en la pista,hay una fuga de corriente,0,0.7535,0.6053
