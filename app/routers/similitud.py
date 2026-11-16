@@ -1,6 +1,6 @@
 """Endpoints de similitud compatibles con el backend."""
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 
 from app.schemas import (
     LoteRequest,
@@ -22,8 +22,10 @@ def similitud_simple(peticion: SimilitudRequest) -> SimilitudResponse:
 
 
 @router.post("/similarity/batch", response_model=LoteResponse)
-def similitud_por_lote(peticion: LoteRequest) -> LoteResponse:
+def similitud_por_lote(peticion: LoteRequest, request: Request) -> LoteResponse:
     """Calcula la similitud contra cada candidato."""
+    # Solo se guarda la cantidad; nunca el contenido de los textos.
+    request.state.candidatos = len(peticion.candidates)
     return LoteResponse(
         similarities=servicio.similitudes(peticion.text, peticion.candidates)
     )
