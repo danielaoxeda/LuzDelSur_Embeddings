@@ -1,0 +1,5 @@
+-r requirements.txt
+
+# Solo para calibracion y graficos (no se necesitan en produccion)
+scikit-learn==1.9.1
+matplotlib==3.11.2
