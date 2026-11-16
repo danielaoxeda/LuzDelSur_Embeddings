@@ -1,0 +1,38 @@
+# Entornos virtuales y cache de Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# Control de versiones y configuracion local
+.git/
+.gitignore
+.env
+.env.*
+.github/
+.vscode/
+.idea/
+
+# Artefactos que no deben entrar a la imagen
+docs/
+scripts/
+tests/
+requirements-dev.txt
+README.md
+AGENTS.md
+docker-compose.yml
+
+# Modelos y caches locales
+.cache/
+models/
+huggingface/
+*.safetensors
+
+# Sistema
+.DS_Store
+Thumbs.db
+*.log

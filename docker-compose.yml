@@ -1,0 +1,35 @@
+# Ejemplo independiente: solo el microservicio de embeddings.
+# En el servidor se integra al compose del backend (ver docs/integracion-docker.md).
+name: luzdelsur-embeddings
+
+services:
+  embeddings:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODELO_EMBEDDINGS: ${EMBEDDINGS_MODEL:-sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2}
+    image: ${EMBEDDINGS_IMAGE:-luzdelsur/embeddings:local}
+    container_name: lds-embeddings
+    environment:
+      EMBEDDINGS_MODEL: ${EMBEDDINGS_MODEL:-sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    # Puerto solo en loopback para pruebas locales. En el servidor puede omitirse.
+    ports:
+      - "127.0.0.1:${EMBEDDINGS_PORT:-8000}:8000"
+    # AJUSTAR: 1536m = 1.5 GB es un valor de partida NO validado.
+    # Medir el consumo real con docker stats y ajustar antes de produccion.
+    mem_limit: ${EMBEDDINGS_MEM_LIMIT:-1536m}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", 'import json, sys, urllib.request; datos = json.load(urllib.request.urlopen("http://127.0.0.1:8000/health", timeout=4)); sys.exit(0 if datos.get("modelo_cargado") is True else 1)']
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 90s
+    networks:
+      - internal
+
+networks:
+  internal:
+    driver: bridge
