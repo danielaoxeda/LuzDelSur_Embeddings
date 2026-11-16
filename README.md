@@ -31,11 +31,39 @@ El modelo se carga una sola vez al iniciar. La primera ejecucion descarga
 - `POST /api/v1/similarity` con `{"text_a": "...", "text_b": "..."}`
 - `POST /api/v1/similarity/batch` con `{"text": "...", "candidates": ["..."]}`
 
+## Limites y errores
+
+- Cada texto admite hasta 1000 caracteres.
+- Un lote admite hasta 200 candidatos.
+- Si se supera un limite o falta un campo, la respuesta es `422` con un mensaje
+  claro en espanol.
+- Si el modelo no esta cargado o falla, `/health` informa
+  `"modelo_cargado": false` y los endpoints responden `503` con JSON.
+- Un lote vacio devuelve `{"similarities": []}`. Un candidato vacio devuelve
+  `0.0` en su posicion.
+
+## Registro de peticiones
+
+Cada peticion registra solo metodo, ruta, codigo, duracion en milisegundos y
+cantidad de candidatos. Nunca se registra el contenido de los textos. El nivel
+se configura con `LOG_LEVEL`.
+
 ## Pruebas
 
 ```powershell
 .\.venv\Scripts\python -m pytest
 ```
+
+## Latencia
+
+Con el servidor local en marcha:
+
+```powershell
+.\.venv\Scripts\python scripts/medir_latencia.py
+```
+
+El script calienta el modelo y mide `/similarity`, lote de 10, 50 y 200.
+Guarda el resultado en `docs/latencia.md`.
 
 ## Variables de entorno
 
