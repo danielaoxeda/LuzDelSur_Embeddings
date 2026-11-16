@@ -14,6 +14,7 @@ class Configuracion(BaseModel):
     dispositivo: str = os.getenv("EMBEDDINGS_DEVICE", "cpu")
     max_candidatos: int = int(os.getenv("EMBEDDINGS_MAX_CANDIDATOS", "200"))
     max_caracteres: int = int(os.getenv("EMBEDDINGS_MAX_CARACTERES", "1000"))
+    nivel_log: str = os.getenv("LOG_LEVEL", "INFO")
 
 
 configuracion = Configuracion()

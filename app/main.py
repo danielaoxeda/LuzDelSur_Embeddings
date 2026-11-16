@@ -1,13 +1,21 @@
 ﻿"""Aplicacion FastAPI del microservicio de similitud semantica."""
 
+import logging
+import time
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
+from app.config import configuracion
 from app.routers.similitud import router
 from app.servicio import ModeloNoDisponible, servicio
+
+nivel_log = getattr(logging, configuracion.nivel_log.upper(), logging.INFO)
+logging.basicConfig(level=nivel_log)
+logger = logging.getLogger("luzdelsur.similitud")
+logger.setLevel(nivel_log)
 
 
 @asynccontextmanager
@@ -25,6 +33,27 @@ app = FastAPI(
 )
 
 app.include_router(router)
+
+
+@app.middleware("http")
+async def registrar_peticion(request: Request, call_next):
+    """Registra metadatos de la peticion, nunca los textos."""
+    inicio = time.perf_counter()
+    estado = 500
+    try:
+        respuesta = await call_next(request)
+        estado = respuesta.status_code
+        return respuesta
+    finally:
+        duracion_ms = (time.perf_counter() - inicio) * 1000
+        logger.info(
+            "metodo=%s ruta=%s estado=%s duracion_ms=%.1f candidatos=%d",
+            request.method,
+            request.url.path,
+            estado,
+            duracion_ms,
+            getattr(request.state, "candidatos", 0),
+        )
 
 
 @app.exception_handler(RequestValidationError)
