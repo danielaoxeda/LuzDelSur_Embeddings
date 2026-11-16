@@ -4,5 +4,3 @@ uvicorn[standard]==0.54.0
 sentence-transformers==6.3.0
 torch==2.15.0+cpu
 pydantic==2.14.3
-pytest==9.2.0
-httpx==0.28.1
