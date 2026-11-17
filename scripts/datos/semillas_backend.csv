@@ -1,0 +1,16 @@
+id,sector,tipo_falla,descripcion,incidente_esperado
+R01,San Borja,BAJA_TENSION,Los focos estan muy bajos y la refrigeradora se apaga sola,SAN_BORJA
+R02,San Borja,BAJA_TENSION,"Baja tension en toda la cuadra, los equipos no encienden",SAN_BORJA
+R03,Chorrillos,ALUMBRADO_PUBLICO,Los postes de la avenida estan apagados toda la noche,
+R04,Lince,CORTE_TOTAL,Se fue la luz en toda la manzana despues de un chispazo,LINCE
+R05,Lince,CORTE_TOTAL,Corte de energia en el edificio y en los vecinos,LINCE
+R06,San Isidro,CORTE_TOTAL,No hay luz en toda la cuadra desde hace 20 minutos,SAN_ISIDRO_C1
+R07,San Isidro,CORTE_TOTAL,Corte de energia en mi casa y en la de los vecinos,SAN_ISIDRO_C1
+R08,san isidro,CORTE_TOTAL,Se fue la electricidad en la zona,SAN_ISIDRO_C1
+R09,Barranco,CORTE_TOTAL,Corte total de energia en la calle,
+R10,Barranco,BAJA_TENSION,La tension baja y los focos parpadean,
+R11,Miraflores,INTERMITENCIA,La luz se corta cada diez minutos,MIRAFLORES_C3_1
+R12,Miraflores,INTERMITENCIA,Microcortes continuos en el departamento,MIRAFLORES_C3_2
+R13,Santiago de Surco,CORTE_TOTAL,Apagon en la urbanizacion,
+R14,Surquillo,CORTE_TOTAL,Sin energia en los comercios de la avenida,
+R15,,MEDIDOR,El medidor hace ruido y huele a quemado,

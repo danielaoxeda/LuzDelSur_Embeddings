@@ -1,0 +1,7 @@
+id_a,id_b,sector,tipo_falla,similitud,zona,incidente_a,incidente_b,etiqueta,prediccion,correcto,descripcion_a,descripcion_b
+R04,R05,LINCE,CORTE_TOTAL,0.1953,baja,LINCE,LINCE,1,0,0,Se fue la luz en toda la manzana despues de un chispazo,Corte de energia en el edificio y en los vecinos
+R11,R12,MIRAFLORES,INTERMITENCIA,0.2591,baja,MIRAFLORES_C3_1,MIRAFLORES_C3_2,0,0,1,La luz se corta cada diez minutos,Microcortes continuos en el departamento
+R01,R02,SAN BORJA,BAJA_TENSION,0.1150,baja,SAN_BORJA,SAN_BORJA,1,0,0,Los focos estan muy bajos y la refrigeradora se apaga sola,"Baja tension en toda la cuadra, los equipos no encienden"
+R06,R07,SAN ISIDRO,CORTE_TOTAL,0.1604,baja,SAN_ISIDRO_C1,SAN_ISIDRO_C1,1,0,0,No hay luz en toda la cuadra desde hace 20 minutos,Corte de energia en mi casa y en la de los vecinos
+R06,R08,SAN ISIDRO,CORTE_TOTAL,0.4942,baja_certeza,SAN_ISIDRO_C1,SAN_ISIDRO_C1,1,0,0,No hay luz en toda la cuadra desde hace 20 minutos,Se fue la electricidad en la zona
+R07,R08,SAN ISIDRO,CORTE_TOTAL,0.5556,alta,SAN_ISIDRO_C1,SAN_ISIDRO_C1,1,1,1,Corte de energia en mi casa y en la de los vecinos,Se fue la electricidad en la zona

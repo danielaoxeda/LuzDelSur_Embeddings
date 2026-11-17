@@ -2,6 +2,7 @@
 
 Este documento es para quien mantiene el compose del backend. **No se modificó
 ningún archivo del backend**; el fragmento de abajo se copia en su repositorio.
+El estado actual se revisó sobre la rama `develop` del backend.
 
 ## 1. Cómo configura el backend la URL (solo lectura)
 
@@ -40,14 +41,43 @@ El backend y este servicio deben estar en la **misma red de Docker**. El nombre
 `embeddings` resuelve por DNS dentro de esa red; no hace falta publicar el
 puerto 8000 al exterior.
 
-## 3. Fragmento listo para copiar al compose del backend
+## 3. Estado actual del compose del backend (`develop`)
 
-Ajustar el nombre de la red (`internal`) si su compose usa otro.
+El servicio `embeddings` ya existe en `deploy/docker-compose.yml`:
+
+| Dato | Valor actual en `develop` |
+| --- | --- |
+| Nombre del servicio | `embeddings` |
+| Imagen | `${EMBEDDINGS_IMAGE:-luzdelsur/embeddings:latest}` |
+| Contexto de build | `${EMBEDDINGS_CONTEXT:-../embeddings}` |
+| Valor en `deploy/.env.example` | `EMBEDDINGS_CONTEXT=../embeddings` |
+| Puerto | `expose: "8000"` (no publicado al exterior) |
+| URL usada por el backend | `EMBEDDINGS_BASE_URL: http://embeddings:8000` |
+| `depends_on` actual | `condition: service_started` |
+| `mem_limit` | no definido en este servicio |
+| `healthcheck` | no definido en el compose; se usa el `HEALTHCHECK` de la imagen |
+
+Sobre `EMBEDDINGS_CONTEXT`: las rutas de `build.context` son relativas a la
+carpeta del compose (`deploy/`), así que `../embeddings` apunta a
+`<repo-backend>/embeddings`. En el servidor hay que dejar el repositorio de
+embeddings en esa ruta o cambiar `EMBEDDINGS_CONTEXT` a la ruta real. Si se
+prefiere no construir en el servidor, se puede usar solo la imagen
+publicada con `EMBEDDINGS_IMAGE`.
+
+## 4. Fragmento recomendado para el compose del backend
+
+Ajustar el nombre de la red (`internal`) y `EMBEDDINGS_CONTEXT` si su compose
+usa otra ruta.
 
 ```yaml
 services:
   embeddings:
-    image: luzdelsur/embeddings:latest
+    build:
+      context: ${EMBEDDINGS_CONTEXT:-../embeddings}
+      dockerfile: Dockerfile
+      args:
+        MODELO_EMBEDDINGS: ${EMBEDDINGS_MODEL:-sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2}
+    image: ${EMBEDDINGS_IMAGE:-luzdelsur/embeddings:latest}
     container_name: lds-embeddings
     environment:
       EMBEDDINGS_MODEL: ${EMBEDDINGS_MODEL:-sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2}
@@ -81,13 +111,14 @@ services:
         condition: service_healthy
 ```
 
-> El compose actual del backend ya define un servicio `embeddings` con
-> `EMBEDDINGS_BASE_URL: http://embeddings:8000`, pero usa
-> `depends_on: condition: service_started`. La condición recomendada es
-> **`service_healthy`**, para que el backend no arranque hasta que el modelo
-> esté cargado. Esa decisión corresponde al equipo del backend.
+> **Recomendación:** cambiar `depends_on.embeddings.condition` de
+> `service_started` a **`service_healthy`**, para que el backend no arranque
+> hasta que el modelo esté cargado. No hace falta declarar un `healthcheck` en
+> el compose: la imagen ya trae su `HEALTHCHECK` contra `/health`; solo se
+> necesitaría declararlo si se usara una imagen sin él. La decisión final
+> corresponde al equipo del backend.
 
-## 4. Orden de arranque
+## 5. Orden de arranque
 
 1. `db` (PostgreSQL) queda `healthy`.
 2. `embeddings` queda `healthy` cuando `/health` responde
@@ -99,7 +130,7 @@ descargarlo desde Hugging Face. Si se cambia `EMBEDDINGS_MODEL` en tiempo de
 ejecución por un modelo que no está en la imagen, ese modelo sí se descargaría
 al arrancar y el `start_period` podría no alcanzar.
 
-## 5. Verificación desde el contenedor del backend
+## 6. Verificación desde el contenedor del backend
 
 ```bash
 docker compose exec backend wget -qO- http://embeddings:8000/health
@@ -109,7 +140,7 @@ Debe devolver `200` con `"modelo_cargado": true`. Si el modelo falla, el
 microservicio responde `503` en los endpoints y el backend sigue operando con
 sus reglas heurísticas, tal como ya está diseñado.
 
-## 6. Medición pendiente
+## 7. Medición pendiente
 
 El límite de 1.5 GB y la latencia en Docker **no se midieron en esta máquina**
 porque no hay Docker instalado. En el servidor, ejecutar desde este repositorio:
