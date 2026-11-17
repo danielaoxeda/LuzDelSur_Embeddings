@@ -1,0 +1,10 @@
+id_a,id_b,sector,tipo_falla,similitud,zona,incidente_a,incidente_b,etiqueta,prediccion,correcto,descripcion_a,descripcion_b
+S01,S02,LA MOLINA,BAJA_TENSION,0.2275,baja,SUG_LA_MOLINA_1,SUG_LA_MOLINA_1,1,0,0,Las luces estan tenues y el televisor se reinicia,"Baja tension en la calle, los equipos no arrancan"
+S06,S07,LA VICTORIA,INTERMITENCIA,0.3457,baja_certeza,SUG_LA_VICTORIA_1,SUG_LA_VICTORIA_1,1,0,0,La luz parpadea cada rato en la tienda,Microcortes constantes en todo el mercado
+S08,S09,MIRAFLORES,ALUMBRADO_PUBLICO,0.3752,baja_certeza,SUG_MIRAFLORES_1,SUG_MIRAFLORES_1,1,0,0,Los postes del parque estan apagados,"No hay alumbrado en la avenida, todo oscuro"
+S08,S10,MIRAFLORES,ALUMBRADO_PUBLICO,0.5600,alta,SUG_MIRAFLORES_1,SUG_MIRAFLORES_2,0,1,0,Los postes del parque estan apagados,Solo una luminaria del parque no prende
+S09,S10,MIRAFLORES,ALUMBRADO_PUBLICO,0.4085,baja_certeza,SUG_MIRAFLORES_1,SUG_MIRAFLORES_2,0,0,1,"No hay alumbrado en la avenida, todo oscuro",Solo una luminaria del parque no prende
+S11,S12,SAN MIGUEL,MEDIDOR,0.5584,alta,SUG_SAN_MIGUEL_1,SUG_SAN_MIGUEL_1,1,1,1,El medidor hace un zumbido y huele a quemado,El contador de luz esta caliente y suena
+S03,S04,SANTIAGO DE SURCO,CORTE_TOTAL,0.3910,baja_certeza,SUG_SURCO_1,SUG_SURCO_1,1,0,0,Se corto la luz en todo el edificio y salieron los vecinos,Sin energia en la urbanizacion desde las ocho
+S03,S05,SANTIAGO DE SURCO,CORTE_TOTAL,0.6169,alta,SUG_SURCO_1,SUG_SURCO_2,0,1,0,Se corto la luz en todo el edificio y salieron los vecinos,"Solo mi departamento se quedo sin luz, los demas tienen"
+S04,S05,SANTIAGO DE SURCO,CORTE_TOTAL,0.3286,baja_certeza,SUG_SURCO_1,SUG_SURCO_2,0,0,1,Sin energia en la urbanizacion desde las ocho,"Solo mi departamento se quedo sin luz, los demas tienen"
