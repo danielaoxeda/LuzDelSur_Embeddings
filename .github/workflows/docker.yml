@@ -1,0 +1,228 @@
+name: Docker
+
+# Sin secretos: solo se usan los permisos de lectura del repositorio.
+on:
+  push:
+    branches:
+      - feat/ci-docker
+  pull_request:
+    branches:
+      - dev
+      - main
+
+permissions:
+  contents: read
+
+env:
+  IMAGEN: luzdelsur/embeddings:ci
+  CONTENEDOR: embeddings-ci
+  PUERTO: "8000"
+
+jobs:
+  imagen:
+    name: Construir y probar la imagen
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Construir la imagen y medir el tiempo
+        run: |
+          inicio=$(date +%s)
+          docker build --tag "$IMAGEN" .
+          fin=$(date +%s)
+          segundos=$((fin - inicio))
+          {
+            echo "## Docker: construccion y pruebas"
+            echo ""
+            echo "### Construccion"
+            echo "- Tiempo del build: ${segundos} s"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Mostrar el tamano final de la imagen
+        run: |
+          bytes=$(docker image inspect --format '{{.Size}}' "$IMAGEN")
+          legible=$(numfmt --to=iec --suffix=B "$bytes")
+          {
+            echo "### Tamano de la imagen"
+            echo "- Imagen: $IMAGEN"
+            echo "- Tamano: ${legible} (${bytes} bytes)"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Verificar que la imagen no trae archivos indebidos
+        run: |
+          docker run --rm --entrypoint sh "$IMAGEN" -c '
+            for ruta in \
+              /app/.env \
+              /app/.env.example \
+              /app/.git \
+              /app/tests \
+              /app/scripts \
+              /app/docs \
+              /app/requirements-dev.txt \
+              /app/AGENTS.md \
+              /app/docker-compose.yml; do
+              if [ -e "$ruta" ]; then echo "PROHIBIDO $ruta"; fi
+            done
+            echo "ARCHIVOS_CSV_PNG"
+            find /app -type f \( -name "*.csv" -o -name "*.png" \) 2>/dev/null || true
+          ' > contenido.txt
+
+          if grep -q '^PROHIBIDO ' contenido.txt; then
+            {
+              echo "### Contenido de la imagen: FALLO"
+              grep '^PROHIBIDO ' contenido.txt | sed 's/^/    /'
+            } >> "$GITHUB_STEP_SUMMARY"
+            grep '^PROHIBIDO ' contenido.txt
+            exit 1
+          fi
+
+          if grep -q '\.csv$\|\.png$' contenido.txt; then
+            echo "### Contenido de la imagen: FALLO" >> "$GITHUB_STEP_SUMMARY"
+            echo "Hay datos de calibracion dentro de la imagen:" >> "$GITHUB_STEP_SUMMARY"
+            grep '\.csv$\|\.png$' contenido.txt >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+
+          {
+            echo "### Contenido de la imagen"
+            echo "- Sin .env, .git, tests, scripts, docs, compose ni datos de calibracion."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Verificar que el modelo viaja horneado (sin red)
+        run: |
+          docker run --rm --network none \
+            --env HF_HUB_OFFLINE=1 \
+            --entrypoint python "$IMAGEN" -c "
+          import os
+          from sentence_transformers import SentenceTransformer
+          modelo = SentenceTransformer(os.environ['EMBEDDINGS_MODEL'], device='cpu')
+          print('dimension', modelo.get_sentence_embedding_dimension())
+          " | tee modelo_offline.txt
+
+          {
+            echo "### Modelo horneado"
+            echo "- Carga sin red: OK ($(grep -o 'dimension.*' modelo_offline.txt))"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Levantar el contenedor
+        run: |
+          docker run --detach \
+            --name "$CONTENEDOR" \
+            --publish "127.0.0.1:${PUERTO}:${PUERTO}" \
+            "$IMAGEN"
+          docker ps --filter "name=$CONTENEDOR" --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
+
+      - name: Esperar /health con el modelo cargado (maximo 120 s)
+        run: |
+          inicio=$(date +%s)
+          listo=false
+          respuesta=""
+
+          for intento in $(seq 1 60); do
+            respuesta=$(curl --silent --max-time 4 "http://127.0.0.1:${PUERTO}/health" || true)
+            if echo "$respuesta" | grep -q '"modelo_cargado"[: ]*true'; then
+              listo=true
+              break
+            fi
+            sleep 2
+          done
+
+          fin=$(date +%s)
+          espera=$((fin - inicio))
+
+          if [ "$listo" != "true" ]; then
+            {
+              echo "### /health: FALLO"
+              echo "- No respondio con modelo_cargado=true en ${espera} s."
+              echo "- Ultima respuesta: ${respuesta:-<vacia>}"
+              echo ""
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+            docker logs "$CONTENEDOR" 2>&1 | tail -n 80 | tee -a "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+
+          {
+            echo "### /health"
+            echo "- Listo en ${espera} s"
+            echo "- Respuesta: ${respuesta}"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Probar POST /api/v1/similarity
+        run: |
+          codigo=$(curl --silent --output simple.json --write-out '%{http_code}' \
+            --header 'Content-Type: application/json' \
+            --data '{"text_a":"no hay energia electrica en mi casa desde ayer","text_b":"me quede sin luz en mi vivienda desde ayer"}' \
+            "http://127.0.0.1:${PUERTO}/api/v1/similarity")
+
+          if [ "$codigo" != "200" ]; then
+            echo "### POST /api/v1/similarity: FALLO" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Codigo HTTP: $codigo" >> "$GITHUB_STEP_SUMMARY"
+            cat simple.json >> "$GITHUB_STEP_SUMMARY" || true
+            exit 1
+          fi
+
+          python3 - <<'PY'
+          import json
+          datos = json.load(open("simple.json", encoding="utf-8"))
+          valor = datos["similarity"]
+          assert isinstance(valor, (int, float)), datos
+          assert 0.0 <= valor <= 1.0, datos
+          assert valor > 0.5, f"se esperaba similitud alta entre frases equivalentes: {datos}"
+          print(f"similitud={valor}")
+          PY
+
+          {
+            echo "### POST /api/v1/similarity"
+            echo "- Frases equivalentes en espanol: $(python3 -c 'import json;print(json.load(open("simple.json"))["similarity"])')"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Probar POST /api/v1/similarity/batch
+        run: |
+          codigo=$(curl --silent --output lote.json --write-out '%{http_code}' \
+            --header 'Content-Type: application/json' \
+            --data '{"text":"se cayo la luz en mi casa","candidates":["no hay energia en la vivienda","fuga de agua en la vereda","poste con cables sueltos"]}' \
+            "http://127.0.0.1:${PUERTO}/api/v1/similarity/batch")
+
+          if [ "$codigo" != "200" ]; then
+            echo "### POST /api/v1/similarity/batch: FALLO" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Codigo HTTP: $codigo" >> "$GITHUB_STEP_SUMMARY"
+            cat lote.json >> "$GITHUB_STEP_SUMMARY" || true
+            exit 1
+          fi
+
+          python3 - <<'PY'
+          import json
+          datos = json.load(open("lote.json", encoding="utf-8"))
+          valores = datos["similarities"]
+          assert len(valores) == 3, datos
+          assert all(0.0 <= valor <= 1.0 for valor in valores), datos
+          assert valores[0] == max(valores), f"el candidato electrico deberia ser el mas parecido: {datos}"
+          print("similarities=", valores)
+          PY
+
+          {
+            echo "### POST /api/v1/similarity/batch"
+            echo "- 3 candidatos, el mas parecido primero: $(python3 -c 'import json;print(json.load(open("lote.json"))["similarities"])')"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Medir memoria del contenedor
+        run: |
+          docker stats --no-stream --format 'table {{.Name}}\t{{.MemUsage}}\t{{.CPUPerc}}'
+          memoria=$(docker stats --no-stream --format '{{.MemUsage}}' "$CONTENEDOR")
+          {
+            echo "### Memoria en reposo"
+            echo "- docker stats --no-stream: ${memoria}"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Guardar logs y limpiar
+        if: always()
+        run: |
+          if docker ps --all --format '{{.Names}}' | grep -qx "$CONTENEDOR"; then
+            docker logs "$CONTENEDOR" 2>&1 | tail -n 40 || true
+            docker rm --force "$CONTENEDOR"
+          fi

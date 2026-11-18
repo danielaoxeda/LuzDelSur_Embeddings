@@ -5,6 +5,7 @@ FROM python:3.12-slim
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
+    HOME=/home/app \
     HF_HOME=/home/app/.cache/huggingface
 
 # Usuario sin privilegios: el proceso no corre como root.
@@ -16,10 +17,12 @@ WORKDIR /app
 
 # Las dependencias van antes que el codigo para aprovechar la cache de capas.
 COPY requirements.txt ./
+# torch primero y con el sufijo +cpu: ese wheel solo existe en el indice CPU.
 RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir \
        --extra-index-url https://download.pytorch.org/whl/cpu \
-       -r requirements.txt
+       "torch==2.15.0+cpu" \
+    && pip install --no-cache-dir -r requirements.txt
 
 # Modelo horneado en la imagen: el contenedor no lo descarga al arrancar.
 ARG MODELO_EMBEDDINGS=sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
